@@ -1,3 +1,8 @@
 body{
     text-align: center;
+    background-color: pink;
+    color: darkslategray;
+}
+#display-joke{
+    margin-top: 20px;
 }
