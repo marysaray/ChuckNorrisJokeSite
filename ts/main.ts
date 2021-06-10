@@ -33,13 +33,26 @@ window.onload = function(){
  * will be generated and displayed.
  */
 function main(){
+    // if checbox is clicked
+    let categories = getSelectedCategories();
+    let catString = categories.toString();
+
+    let btnJoke = <HTMLButtonElement>document.getElementById("get-joke");
+    btnJoke.disabled = true;
+    btnJoke.innerText = "Retrieving...";
+    // get div to manipulate
+    let displayDiv = document.getElementById("display-joke");
+    // get rid of hidden attribute
+    displayDiv.setAttribute("hidden","hidden");
     // Create object to communicate with the server.
     let http = new XMLHttpRequest();
+    let url = "https://api.icndb.com/jokes/random?exclude=[" + catString + "]";
+    console.log(url);
     // Specifies the type of request: get URL from Chuck Norris API.
-    http.open("GET", "https://api.icndb.com/jokes/random?limitTo=[nerdy]");
+    http.open("GET", url);
 
     // Function to retrieve differets readyState status.
-    http.onreadystatechange = proccesRequest;
+    http.onreadystatechange = processRequest;
 
     // Send request to the server
     http.send();
@@ -50,19 +63,25 @@ function main(){
  * Results depends on the status message### and
  * what is being applied within the control structure.
  */
-function proccesRequest(){
+function processRequest(){
     let http = <XMLHttpRequest>this;
     /* 4: request finished and response is ready. */
     /* 200 OK: The request is OK --> standard response 
                for successful HTTP requests) */
     if(http.readyState == 4 && http.status == 200){// both needs to be true.
-    // convert string into object with JSON parse method.
-    let response:oneJoke = JSON.parse(http.responseText).value; // get value out of response
+        // convert string into object with JSON parse method.
+        let response:oneJoke = JSON.parse(http.responseText).value; // get value out of response
         console.log(response);    
         console.log(response.id);
         console.log(response.joke);
         console.log(response.categories);
+        // display joke text
         displayJoke(response); 
+    }
+    if(http.readyState == 4){
+        let btnJoke = <HTMLButtonElement>document.getElementById("get-joke");
+        btnJoke.disabled = false;
+        btnJoke.innerText = "Get Random Joke";
     }
 }
 /**
@@ -72,6 +91,8 @@ function proccesRequest(){
 function displayJoke(j:oneJoke){
     // get div to manipulate
     let displayDiv = document.getElementById("display-joke");
+    // get rid of hidden attribute
+    displayDiv.removeAttribute("hidden");
     // select the element you want to target
     let jokeIdSpan = <HTMLElement>displayDiv.querySelector("h2 > span");
     // display value of object id.
@@ -129,3 +150,22 @@ function displayCategories(){
     }
 }
 
+function getSelectedCategories(){
+    let categoryDiv = document.getElementById("categories");
+    // get all checkboxes elements out of div
+    let checkBoxes = categoryDiv.querySelectorAll("input[type=checkbox]");
+    console.log("Chosen Categories");
+    console.log(checkBoxes);
+    // store an Array
+    let selectedCategories = [];
+    for(let i = 0; i < checkBoxes.length; i++){
+        // currrent checkbox
+        let currCategory = <HTMLInputElement>checkBoxes[i];
+        // if checked get value attribute: category
+        if(currCategory.checked){
+            // adds element in JavaScript
+            selectedCategories.push(currCategory.value);
+        }
+    }
+    return selectedCategories;
+}
