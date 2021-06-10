@@ -6,3 +6,23 @@ body{
 #display-joke{
     margin-top: 20px;
 }
+/* Transition joke text on web page */
+.fade-in{
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 1s;
+}
+/* animation method */
+@keyframes fadeInOpacity{
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+#get-joke{
+    margin-top: 5px;
+}
